@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>petproject032</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        :root {
+            --primary: #2a3d66;
+            --secondary: #5d8aa8;
+            --accent: #f28c38;
+            --light: #f5f5f5;
+            --dark: #1a1a2e;
+            --success: #8bbe1b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .geometric-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .menu li {
+            margin-left: 2rem;
+        }
+        
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding-bottom: 5px;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .menu a:hover, .menu a.active {
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+        
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .section-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--secondary);
+            opacity: 0.3;
+            margin-right: 1rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: var(--primary);
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+        
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            padding: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--secondary);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--accent);
+        }
+        
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .card p {
+            color: #666;
+        }
+        
+        .process-diagram {
+            display: flex;
+            justify-content: space-between;
+            margin: 3rem 0;
+            position: relative;
+        }
+        
+        .process-diagram::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--secondary);
+            z-index: 0;
+        }
+        
+        .process-step {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 150px;
+        }
+        
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        
+        .process-step:hover .step-icon {
+            background-color: var(--accent);
+            transform: scale(1.1);
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .comparison-table th {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(93, 138, 168, 0.1);
+        }
+        
+        .comparison-table tr:hover {
+            background-color: rgba(93, 138, 168, 0.2);
+        }
+        
+        .highlight {
+            background-color: rgba(242, 140, 56, 0.2);
+            color: var(--primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 2rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        .footer-section p, .footer-section a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .footer-section a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .menu {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 80%;
+                height: 100vh;
+                background: var(--primary);
+                flex-direction: column;
+                padding: 2rem;
+                transition: left 0.3s;
+                z-index: 100;
+            }
+            
+            .menu.active {
+                left: 0;
+            }
+            
+            .menu li {
+                margin: 1.5rem 0;
+            }
+            
+            .hamburger {
+                display: block;
+                z-index: 101;
+            }
+            
+            .process-diagram {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .process-diagram::before {
+                height: 100%;
+                width: 4px;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .process-step {
+                margin-bottom: 2rem;
+            }
+            
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="geometric-overlay" id="overlay"></div>
+        <nav>
+            <a href="#" class="logo">OntoMed</a>
+            <ul class="menu">
+                <li><a href="#introduction" class="active">Introduction</a></li>
+                <li><a href="#approaches">Approaches</a></li>
+                <li><a href="#techniques">Techniques</a></li>
+                <li><a href="#comparison">Comparison</a></li>
+                <li><a href="#resources">Resources</a></li>
+            </ul>
+            <button class="hamburger">☰</button>
+        </nav>
+        <div class="hero">
+            <h1>Approaches in Ontology Mediation</h1>
+            <p>Exploring methodologies and techniques for bridging semantic heterogeneity between ontologies in the context of knowledge representation and information integration.</p>
+        </div>
+    </header>
+    
+    <main>
+        <section id="introduction" class="section">
+            <div class="section-header">
+                <div class="section-number">01</div>
+                <h2 class="section-title">Introduction to Ontology Mediation</h2>
+            </div>
+            <p>Ontology mediation addresses the challenge of semantic heterogeneity in distributed information systems. As different organizations develop ontologies independently, integrating these diverse knowledge representations becomes crucial for interoperability and knowledge sharing.</p>
+            <p>Ontologies capture domain knowledge in a structured, machine-processable format, but differences in conceptualization, terminology, and granularity create barriers to seamless integration. Ontology mediation provides solutions to bridge these gaps through various methodologies and techniques.</p>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3>What is Ontology Mediation?</h3>
+                    <p>The process of establishing semantic interoperability between different ontologies through mapping, merging, alignment, or translation approaches to enable knowledge sharing across heterogeneous systems.</p>
+                </div>
+                <div class="card">
+                    <h3>Why is it Important?</h3>
+                    <p>It facilitates knowledge sharing, semantic interoperability, and integration of information across organizational boundaries, especially critical in domains like healthcare, e-commerce, and the semantic web.</p>
+                </div>
+                <div class="card">
+                    <h3>Key Challenges</h3>
+                    <p>Resolving terminological differences, conceptual mismatches, structural heterogeneity, and maintaining semantic consistency while preserving the original intentions of each ontology.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="approaches" class="section">
+            <div class="section-header">
+                <div class="section-number">02</div>
+                <h2 class="section-title">Major Approaches</h2>
+            </div>
+            <p>Ontology mediation encompasses several fundamental approaches, each with distinct characteristics and applications. These approaches differ in how they handle the integration of multiple ontologies and the preservation of the original knowledge structures.</p>
+            
+            <div class="process-diagram">
+                <div class="process-step">
+                    <div class="step-icon">1</div>
+                    <div class="step-title">Ontology Mapping</div>
+                    <div class="step-desc">Establishing correspondences between entities in different ontologies</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">2</div>
+                    <div class="step-title">Ontology Alignment</div>
+                    <div class="step-desc">Creating links while preserving original ontologies</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">3</div>
+                    <div class="step-title">Ontology Merging</div>
+                    <div class="step-desc">Creating a unified ontology from multiple sources</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">4</div>
+                    <div class="step-title">Ontology Translation</div>
+                    <div class="step-desc">Converting ontologies between different representation languages</div>
+                </div>
+            </div>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3>Ontology Mapping</h3>
+                    <p>Involves creating explicit links between related entities in different ontologies. These mappings establish semantic correspondences between concepts, properties, or instances, allowing systems to translate queries and data between different ontological representations.</p>
+                    <p>Mapping techniques include lexical matching, structural analysis, and instance-based learning approaches.</p>
+                </div>
+                <div class="card">
+                    <h3>Ontology Alignment</h3>
+                    <p>Focuses on establishing a coherent relationship between ontologies while keeping the original ontologies intact. Alignment results in a set of correspondences that can be used for various integration tasks without modifying the source ontologies.</p>
+                    <p>Particularly useful in scenarios where ontologies must remain separate but interoperable.</p>
+                </div>
+                <div class="card">
+                    <h3>Ontology Merging</h3>
+                    <p>Creates a new, unified ontology that combines and reconciles the knowledge from multiple source ontologies. The merged ontology provides a consistent, integrated view that resolves conflicts and redundancies.</p>
+                    <p>Merging is appropriate when a single, comprehensive ontology is needed to serve as a reference model.</p>
+                </div>
+                <div class="card">
+                    <h3>Ontology Translation</h3>
+                    <p>Converts ontologies from one representation language or formalism to another while preserving the semantics. This approach bridges technological differences between ontology languages (e.g., OWL to RDF, or RDFS to OWL).</p>
+                    <p>Essential for technical interoperability across different semantic technologies.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="techniques" class="section">
+            <div class="section-header">
+                <div class="section-number">03</div>
+                <h2 class="section-title">Mediation Techniques</h2>
+            </div>
+            <p>Implementing ontology mediation requires sophisticated techniques that can identify and resolve semantic heterogeneity. These techniques vary in their approach, complexity, and applicability to different scenarios.</p>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3>Lexical Techniques</h3>
+                    <p>Uses string similarity metrics, synonym dictionaries, and linguistic resources like WordNet to identify terminological matches between ontology entities. These techniques analyze labels, annotations, and textual descriptions to determine potential correspondences.</p>
+                    <p>Examples include edit distance algorithms, n-gram matching, and TF-IDF similarity.</p>
+                </div>
+                <div class="card">
+                    <h3>Structural Techniques</h3>
+                    <p>Analyzes the hierarchical and relational structures within ontologies to identify similar patterns and relationships. These techniques compare taxonomic positions, property constraints, and structural contexts of entities.</p>
+                    <p>Graph-based approaches and similarity flooding algorithms exemplify structural techniques.</p>
+                </div>
+                <div class="card">
+                    <h3>Semantic Techniques</h3>
+                    <p>Leverages formal semantics and logical inference to identify correspondences based on the meaning of concepts. These approaches use reasoning services to check for logical equivalence or subsumption relationships.</p>
+                    <p>Semantic techniques include model-theoretic approaches and description logic reasoning.</p>
+                </div>
+                <div class="card">
+                    <h3>Instance-Based Techniques</h3>
+                    <p>Compares the instances or individuals associated with concepts to determine similarities. If two concepts share many of the same instances, they are likely semantically related.</p>
+                    <p>Often employs statistical measures and machine learning algorithms for classification.</p>
+                </div>
+                <div class="card">
+                    <h3>Hybrid Approaches</h3>
+                    <p>Combines multiple techniques to leverage their complementary strengths. Hybrid approaches often use weighted combinations of lexical, structural, and semantic similarities to improve overall matching accuracy.</p>
+                    <p>Many state-of-the-art ontology matching systems implement hybrid strategies.</p>
+                </div>
+                <div class="card">
+                    <h3>Machine Learning Approaches</h3>
+                    <p>Applies supervised, unsupervised, or semi-supervised learning algorithms to identify patterns and correspondences between ontologies. These approaches can adapt to different domains and learn from expert feedback.</p>
+                    <p>Neural networks and deep learning models are increasingly being applied to ontology matching tasks.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="comparison" class="section">
+            <div class="section-header">
+                <div class="section-number">04</div>
+                <h2 class="section-title">Comparison of Approaches</h2>
+            </div>
+            <p>Different ontology mediation approaches are suited to different contexts and requirements. The following comparison highlights the key characteristics, strengths, and limitations of each approach.</p>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Approach</th>
+                        <th>Preservation of Source</th>
+                        <th>Integration Level</th>
+                        <th>Complexity</th>
+                        <th>Best Use Cases</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Ontology Mapping</strong></td>
+                        <td>High (sources unchanged)</td>
+                        <td>Loose coupling</td>
+                        <td>Moderate</td>
+                        <td>Query translation, federated systems</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ontology Alignment</strong></td>
+                        <td>High (sources unchanged)</td>
+                        <td>Medium coupling</td>
+                        <td>Moderate to High</td>
+                        <td>Cross-domain interoperability, semantic annotation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ontology Merging</strong></td>
+                        <td>Low (creates new artifact)</td>
+                        <td>Tight integration</td>
+                        <td>High</td>
+                        <td>Comprehensive domain modeling, reference ontologies</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ontology Translation</strong></td>
+                        <td>Medium (structure preserved)</td>
+                        <td>Technical integration</td>
+                        <td>Varies by languages</td>
+                        <td>Technical interoperability, platform migration</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>The selection of an appropriate approach depends on factors such as:</p>
+            <ul>
+                <li>The need to preserve original ontologies</li>
+                <li>The level of integration required</li>
+                <li>The autonomy of the organizations involved</li>
+                <li>The complexity of the source ontologies</li>
+                <li>The intended use of the mediated knowledge</li>
+            </ul>
+            
+            <p>In practice, comprehensive ontology mediation solutions often combine multiple approaches to address different aspects of the integration challenge.</p>
+        </section>
+        
+        <section id="resources" class="section">
+            <div class="section-header">
+                <div class="section-number">05</div>
+                <h2 class="section-title">Tools and Resources</h2>
+            </div>
+            <p>A variety of tools, frameworks, and resources have been developed to support ontology mediation tasks. These tools implement different approaches and techniques, offering varying levels of automation and user interaction.</p>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3>Alignment Tools</h3>
+                    <p>Software systems specifically designed for ontology alignment and mapping tasks. These tools implement various matching algorithms and provide interfaces for reviewing and validating the generated alignments.</p>
+                    <p>Examples include the <span class="highlight">Alignment API</span>, <span class="highlight">AgreementMaker</span>, and <span class="highlight">LogMap</span>.</p>
+                </div>
+                <div class="card">
+                    <h3>Ontology Editors</h3>
+                    <p>Integrated development environments for ontology engineering that often include mediation capabilities. These tools provide comprehensive support for creating, editing, and managing ontologies and their relationships.</p>
+                    <p>Popular editors include <span class="highlight">Protégé</span>, <span class="highlight">TopBraid Composer</span>, and <span class="highlight">NeOn Toolkit</span>.</p>
+                </div>
+                <div class="card">
+                    <h3>Matching Libraries</h3>
+                    <p>Reusable software components that implement specific matching algorithms and techniques. These libraries can be integrated into larger systems to provide ontology matching capabilities.</p>
+                    <p>Examples include <span class="highlight">S-Match</span>, <span class="highlight">COMA++</span>, and <span class="highlight">MAFRA Toolkit</span>.</p>
+                </div>
+                <div class="card">
+                    <h3>Evaluation Initiatives</h3>
+                    <p>Community efforts to assess and compare the performance of ontology matching systems. These initiatives provide benchmarks, test datasets, and evaluation metrics for systematic comparison.</p>
+                    <p>The <span class="highlight">Ontology Alignment Evaluation Initiative (OAEI)</span> is the most prominent example, organizing annual evaluation campaigns.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Ontology Mediation</h3>
+                <p>Ontology mediation is a critical area of semantic technologies that enables interoperability between different knowledge representations and information systems.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Related Topics</h3>
+                <a href="#">Semantic Web</a>
+                <a href="#">Knowledge Representation</a>
+                <a href="#">Ontology Engineering</a>
+                <a href="#">Information Integration</a>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="#">Academic Publications</a>
+                <a href="#">Software Tools</a>
+                <a href="#">Community Forums</a>
+                <a href="#">Tutorials</a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2025 OntoMed | Approaches in Ontology Mediation
+        </div>
+    </footer>
+    
+    <div class="back-to-top">↑</div>
+    
+    <script>
+        $(document).ready(function() {
+            // Create geometric pattern overlay
+            function createGeometricPattern() {
+                const overlay = $('#overlay');
+                overlay.empty();
+                
+                const width = overlay.width();
+                const height = overlay.height();
+                const svg = $('<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"></svg>');
+                
+                // Create random triangles
+                for (let i = 0; i < 15; i++) {
+                    const x1 = Math.random() * width;
+                    const y1 = Math.random() * height;
+                    const x2 = x1 + (Math.random() * 100 - 50);
+                    const y2 = y1 + (Math.random() * 100 - 50);
+                    const x3 = x1 + (Math.random() * 100 - 50);
+                    const y3 = y1 + (Math.random() * 100 - 50);
+                    
+                    const triangle = $(`<polygon points="${x1},${y1} ${x2},${y2} ${x3},${y3}" fill="white" opacity="${Math.random() * 0.3 + 0.1}"/>`);
+                    svg.append(triangle);
+                }
+                
+                // Create random circles
+                for (let i = 0; i < 10; i++) {
+                    const cx = Math.random() * width;
+                    const cy = Math.random() * height;
+                    const r = Math.random() * 30 + 5;
+                    
+                    const circle = $(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="white" opacity="${Math.random() * 0.2 + 0.1}"/>`);
+                    svg.append(circle);
+                }
+                
+                overlay.append(svg);
+            }
+            
+            createGeometricPattern();
+            $(window).resize(createGeometricPattern);
+            
+            // Mobile menu toggle
+            $('.hamburger').click(function() {
+                $('.menu').toggleClass('active');
+                $('.hamburger').text($('.menu').hasClass('active') ? '✕' : '☰');
+            });
+            
+            // Smooth scrolling for navigation
+            $('a[href^="#"]').click(function(e) {
+                e.preventDefault();
+                
+                const target = $($(this).attr('href'));
+                if (target.length) {
+                    $('html, body').animate({
+                        scrollTop: target.offset().top - 100
+                    }, 800);
+                }
+                
+                // Close mobile menu if open
+                $('.menu').removeClass('active');
+                $('.hamburger').text('☰');
+            });
+            
+            // Scroll animations for sections
+            function checkSections() {
+                $('.section').each(function() {
+                    const sectionTop = $(this).offset().top;
+                    const windowHeight = $(window).height();
+                    const scrollY = $(window).scrollTop();
+                    
+                    if (scrollY > sectionTop - windowHeight + 200) {
+                        $(this).addClass('visible');
+                    }
+                });
+                
+                // Show/hide back-to-top button
+                if ($(window).scrollTop() > 500) {
+                    $('.back-to-top').addClass('visible');
+                } else {
+                    $('.back-to-top').removeClass('visible');
+                }
+            }
+            
+            checkSections();
+            $(window).scroll(checkSections);
+            
+            // Back to top button
+            $('.back-to-top').click(function() {
+                $('html, body').animate({
+                    scrollTop: 0
+                }, 800);
+            });
+            
+            // Active menu item on scroll
+            $(window).scroll(function() {
+                let current = '';
+                
+                $('section').each(function() {
+                    const sectionTop = $(this).offset().top;
+                    if ($(window).scrollTop() >= sectionTop - 200) {
+                        current = $(this).attr('id');
+                    }
+                });
+                
+                $('.menu a').removeClass('active');
+                $(`.menu a[href="#${current}"]`).addClass('active');
+            });
+        });
+    </script>
+</body>
+</html>
